@@ -1,15 +1,27 @@
-import { useState } from "react";
-import { Input } from "../components/ui/input";
-import { Button } from "./ui/button";
+import { useState } from 'react';
+import { Input } from '../components/ui/input';
+import { Button } from './ui/button';
+import { useLazyGetSummaryQuery } from '../services/article';
 
 const Demo = (e) => {
   const [article, setArticle] = useState({
-    url: "",
-    summary: "",
+    url: '',
+    summary: '',
   });
 
-  const handleSubmit = async () => {
-    alert("Submitted");
+  const [getSummary, { isFetching, erro }] = useLazyGetSummaryQuery();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { data } = await getSummary({ artilcleUrl: article.url });
+
+    if (data?.summary) {
+      const newArticle = { ...article, summary: data.summary };
+      setArticle(newArticle);
+
+      console.log(newArticle);
+    }
   };
 
   return (
